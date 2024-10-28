@@ -12,7 +12,7 @@ public struct WebView: NSViewRepresentable {
     @ObservedObject public var model: WebViewModel
     
     public init(model: WebViewModel) {
-            self.model = model
+        self.model = model
     }
     
     public class Coordinator: NSObject, WKNavigationDelegate {
@@ -45,13 +45,14 @@ public struct WebView: NSViewRepresentable {
             }
         }
         
-        public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+        public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, preferences: WKWebpagePreferences, decisionHandler: @escaping (WKNavigationActionPolicy, WKWebpagePreferences) -> Void) {
+            preferences.allowsContentJavaScript = self.parent.model.enableJavaScript
             if let newURL = navigationAction.request.url {
                 DispatchQueue.main.async {
                     self.parent.model.url = newURL
                 }
             }
-            decisionHandler(.allow)
+            decisionHandler(.allow, preferences)
         }
         
         public override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
@@ -72,6 +73,7 @@ public struct WebView: NSViewRepresentable {
         context.coordinator.webView = webView
         webView.navigationDelegate = context.coordinator
         webView.addObserver(context.coordinator, forKeyPath: "title", options: .new, context: nil)
+        
         webView.load(URLRequest(url: model.url))
         return webView
     }
@@ -100,4 +102,3 @@ public struct WebView: NSViewRepresentable {
         }
     }
 }
-
