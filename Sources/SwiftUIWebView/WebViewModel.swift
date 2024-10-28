@@ -14,6 +14,7 @@ public class WebViewModel: ObservableObject {
     @Published public var action: BrowserAction = .none
     @Published public var backForwardList: WKBackForwardList?
     @Published public var isLoading: Bool = false
+    @Published public var enableJavaScript: Bool = false
     
     public init(url: URL) {
         self.url = url
