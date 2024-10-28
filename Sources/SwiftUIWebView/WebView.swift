@@ -13,7 +13,6 @@ public struct WebView: NSViewRepresentable {
     
     public init(model: WebViewModel) {
         self.model = model
-        self.model.enableJavaScript = enableJavascript
     }
     
     public class Coordinator: NSObject, WKNavigationDelegate {
